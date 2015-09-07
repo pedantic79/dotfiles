@@ -11,3 +11,5 @@ set smartindent
 colorscheme hipster
 syntax on
 
+command Hidechars set nolist nonumber
+
