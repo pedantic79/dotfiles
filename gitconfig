@@ -1,0 +1,17 @@
+[user]
+	name = Dan Nguyen
+	email = pedantic@gmail.com
+[credential]
+	helper = cache
+[color]
+	ui = auto
+[merge]
+	summary=true
+	tool = bc3
+[push]
+	default = simple
+[mergetool "bc3"]
+	path = /cygdrive/c/Program Files (x86)/Beyond Compare 3/BComp.exe
+[alias]
+	tree = log --graph --full-history --color --all --pretty=format:"%x1b[31m%h%x09%x1b[32m%d%x1b[0m%x20%s"
+	lol = log --graph --decorate --pretty=oneline --abbrev-commit --all
