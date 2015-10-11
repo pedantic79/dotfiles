@@ -13,5 +13,5 @@
 [mergetool "bc3"]
 	path = /cygdrive/c/Program Files (x86)/Beyond Compare 3/BComp.exe
 [alias]
-	tree = log --graph --full-history --color --all --pretty=format:"%x1b[31m%h%x09%x1b[32m%d%x1b[0m%x20%s"
+	tree = log --graph --decorate --pretty=oneline --abbrev-commit
 	lol = log --graph --decorate --pretty=oneline --abbrev-commit --all
