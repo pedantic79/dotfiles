@@ -10,10 +10,12 @@
 	tool = bc3
 [push]
 	default = simple
-[mergetool "bc3"]
-	path = /cygdrive/c/Program Files (x86)/Beyond Compare 3/BComp.exe
 [alias]
 	tree = log --graph --decorate --pretty=oneline --abbrev-commit
 	lol = log --graph --decorate --pretty=oneline --abbrev-commit --all
 [rerere]
 	enabled = true
+[diff]
+	tool = bc3
+[mergetool]
+	bc3 = trustExitCode
