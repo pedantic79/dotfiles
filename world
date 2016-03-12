@@ -1,0 +1,8 @@
+hspec -any
+parsec -any
+lens -any
+criterion -any
+bimap -any
+primes -any
+either -any
+QuickCheck -any
