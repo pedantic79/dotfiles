@@ -7,7 +7,6 @@ cabal-install
 chromium
 cifs-utils
 clang
-clojure1.6
 dc
 debootstrap
 discover
