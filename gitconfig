@@ -12,8 +12,9 @@
 	default = simple
 [alias]
 	tree = log --graph --decorate --oneline
-	lol = log --graph --decorate --pretty=oneline --abbrev-commit --all
-	lfull = log --graph --decorate --pretty=fuller --abbrev-commit --all --name-status
+	lol = log --graph --decorate --pretty=oneline --abbrev-commit --branches --tags --remotes
+	lf = log --graph --decorate --pretty=fuller --abbrev-commit --exclude='refs/notes/review' --exclude='refs/stash' --all --name-status
+	lp = !sh -c 'git log -p ${1:-HEAD^..HEAD}'
 [rerere]
 	enabled = true
 [diff]
