@@ -1,0 +1,11 @@
+clone() {
+  git clone ssh://dnn@powermc-git.aus.stglabs.ibm.com:29418/$1 && \
+    scp -p -P 29418 dnn@powermc-git.aus.stglabs.ibm.com:hooks/commit-msg $1/.git/hooks/
+}
+
+sonar() {
+  local _user=gradle_sonar
+  local _pass=$(keyring get sonar $_user)
+  local _server=trinity.aus.stglabs.ibm.com
+  sonar-runner -Dsonar.analysis.mode=incremental -Dsonar.login=$_user -Dsonar.password=$_pass -Dsonar.scm-stats.enabled=false -Dsonar.scm.enabled=false -Dsonar.host.url=http://$_server:9000 -Dsonar.jdbc.url=jdbc:mysql://$_server:3306/sonar
+}
