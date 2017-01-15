@@ -11,10 +11,10 @@
 [push]
 	default = simple
 [alias]
-	tree = log --graph --decorate --oneline
+	tree = log --graph --decorate --oneline --all
 	lol = log --graph --decorate --pretty=oneline --abbrev-commit --branches --tags --remotes
 	lf = log --graph --decorate --pretty=fuller --abbrev-commit --exclude='refs/notes/review' --exclude='refs/stash' --all --name-status
-	lp = "!f() { git log -p ${1:-HEAD^..HEAD}; }; f"
+	lp = "!f() { git log --pretty=fuller --abbrev-commit -p ${1:-HEAD^..HEAD}; }; f"
 [rerere]
 	enabled = true
 [diff]
