@@ -6,3 +6,6 @@ bimap -any
 primes -any
 either -any
 QuickCheck -any
+hlint -any
+happy -any
+digits -any
