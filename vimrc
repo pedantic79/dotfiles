@@ -8,7 +8,7 @@ set number
 set tabstop=4
 set smartindent
 
-colorscheme hipster
+colorscheme molokai
 syntax on
 
 command Hidechars set nolist nonumber
