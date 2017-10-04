@@ -8,8 +8,11 @@
 [merge]
 	summary=true
 	tool = bc3
-[push]
-	default = simple
+[mergetool]
+	keepBackup = false
+	prompt = false
+[mergetool "bc3"]
+	trustExitCode = true
 [alias]
 	tree = log --graph --decorate --oneline --all
 	lol = log --graph --decorate --pretty=oneline --abbrev-commit --branches --tags --remotes
@@ -17,9 +20,5 @@
 	lp = "!f() { git log --pretty=fuller --abbrev-commit -p ${1:-HEAD^..HEAD}; }; f"
 [rerere]
 	enabled = true
-[diff]
-	tool = bc3
 [difftool]
 	prompt = false
-[mergetool]
-	bc3 = trustExitCode
