@@ -1,6 +1,8 @@
 [user]
 	name = Dan Nguyen
 	email = pedantic@gmail.com
+[include]
+	path = ~/.gitconfig.local
 [credential]
 	helper = cache
 [color]
@@ -19,6 +21,8 @@
 	lf = log --graph --decorate --pretty=fuller --abbrev-commit --exclude='refs/notes/review' --exclude='refs/stash' --all --name-status
 	lp = "!f() { git log --pretty=fuller --abbrev-commit -p ${1:-HEAD^..HEAD}; }; f"
 [rerere]
-	enabled = true
+	enabled = false
 [difftool]
 	prompt = false
+[core]
+	autocrlf = input
