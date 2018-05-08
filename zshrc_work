@@ -9,3 +9,15 @@ sonar() {
   local _server=trinity.aus.stglabs.ibm.com
   sonar-runner -Dsonar.analysis.mode=incremental -Dsonar.login=$_user -Dsonar.password=$_pass -Dsonar.scm-stats.enabled=false -Dsonar.scm.enabled=false -Dsonar.host.url=http://$_server:9000 -Dsonar.jdbc.url=jdbc:mysql://$_server:3306/sonar
 }
+
+buildenv() {
+  local git="$(git rev-parse --show-toplevel 2>/dev/null)"
+  local p="$(pwd)"
+  local d="${p:-git}"
+  local arch="$(uname -m | cut -c1-3)"
+
+  docker run --privileged -it --rm --dns=9.0.128.50 \
+    -v $HOME/hmc/gradle-cache/$(basename $d):/root/.gradle \
+    -v $d:/hmc destinykitchen.aus.stglabs.ibm.com/$arch/mcp83-buildenv \
+    "$@"
+}
