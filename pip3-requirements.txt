@@ -1,0 +1,7 @@
+pep8
+pylama
+pylint
+pep257
+pyflakes
+ouimeaux
+virtualenv
