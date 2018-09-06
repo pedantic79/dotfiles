@@ -9,3 +9,5 @@ QuickCheck -any
 hlint -any
 happy -any
 digits -any
+pipes -any
+split -any
