@@ -3,8 +3,6 @@
 	email = pedantic@gmail.com
 [include]
 	path = ~/.gitconfig.local
-[credential]
-	helper = cache
 [color]
 	ui = auto
 [merge]
@@ -20,9 +18,12 @@
 	lol = log --graph --decorate --pretty=oneline --abbrev-commit --branches --tags --remotes
 	lf = log --graph --decorate --pretty=fuller --abbrev-commit --exclude='refs/notes/review' --exclude='refs/stash' --all --name-status
 	lp = "!f() { git log --pretty=fuller --abbrev-commit -p ${1:-HEAD^..HEAD}; }; f"
+	dlpr = "!f() { git fetch upstream +refs/pull/${1:-ERROR}/merge && git checkout FETCH_HEAD; }; f"
 [rerere]
 	enabled = false
 [difftool]
 	prompt = false
 [core]
 	autocrlf = input
+[fetch]
+	prune = true
