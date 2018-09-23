@@ -27,3 +27,5 @@
 	autocrlf = input
 [fetch]
 	prune = true
+[diff]
+	wsErrorHighlight = all
