@@ -19,7 +19,7 @@
 	lf = log --graph --decorate --pretty=fuller --abbrev-commit --exclude='refs/notes/review' --exclude='refs/stash' --all --name-status
 	lp = "!f() { git log --pretty=fuller --abbrev-commit -p ${1:-HEAD^..HEAD}; }; f"
 	dlpr = "!f() { local pr=${1:-ERROR}; git fetch upstream pull/$pr/head:pr-$pr && git checkout pr-$pr; }; f"
-	up = "!f() { local b=$(git symbolic-ref --short HEAD) && git checkout master && git fetch --all && git rebase upstream/master && git push && git checkout $b; }; f"
+#	up = "!f() { local b=$(git symbolic-ref --short HEAD) && git checkout master && git fetch --all && git rebase upstream/master && git push && git checkout $b; }; f"
 [rerere]
 	enabled = false
 [difftool]
