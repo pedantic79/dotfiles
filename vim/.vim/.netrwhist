@@ -1,11 +1,3 @@
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =9
-let g:netrw_dirhist_1='/Users/dnn/power-iaas/service-broker/credentials'
-let g:netrw_dirhist_2='/Users/dnn/power-iaas/service-broker'
-let g:netrw_dirhist_3='/Users/dnn/power-iaas'
-let g:netrw_dirhist_4='/Users/dnn/power-iaas/power-iaas-ui-e2e/tests-e2e'
-let g:netrw_dirhist_5='/Users/dnn/power-iaas/power-iaas-cloud-ui/src/client/components/LeftAppMenu'
-let g:netrw_dirhist_6='/Users/dnn/pcloud4gcp/gcp-account-service'
-let g:netrw_dirhist_7='/Users/dnn/my-app2'
-let g:netrw_dirhist_8='/Users/dnn/power-iaas/devops-tools'
-let g:netrw_dirhist_9='/Users/dnn/power-iaas/power-iaas-ui'
+let g:netrw_dirhistcnt =1
+let g:netrw_dirhist_1='/Users/dnn/pcloud4gcp/gcp-pcloud-ui/web/gcp-app/node_modules'
