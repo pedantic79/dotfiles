@@ -18,7 +18,7 @@ call plug#begin("~/.vim/plugged")
   Plug 'ryanoasis/vim-devicons'
 
   " File Search
-  Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+  " Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
   Plug 'junegunn/fzf.vim'
 call plug#end()
 
@@ -81,10 +81,10 @@ nnoremap <c-n> :call OpenTerminal()<CR>
 set encoding=UTF-8
 
 " Mine
-command Hidechars set nolist nonumber
+command Hidechars set invlist invnumber | GitGutterToggle
 set number
-set list lcs=trail:·,precedes:«,extends:»,eol:¬,tab:→\
+set list lcs=tab:→\ ,trail:·,precedes:«,extends:»,eol:¬
 set colorcolumn=81,121
 set spell
-set cursorline
+" set cursorline
 
