@@ -18,7 +18,7 @@ call plug#begin("~/.vim/plugged")
   Plug 'ryanoasis/vim-devicons'
 
   " File Search
-  " Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+  Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
   Plug 'junegunn/fzf.vim'
 call plug#end()
 
@@ -87,4 +87,3 @@ set list lcs=tab:→\ ,trail:·,precedes:«,extends:»,eol:¬
 set colorcolumn=81,121
 set spell
 " set cursorline
-
