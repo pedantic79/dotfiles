@@ -1,6 +1,7 @@
 call plug#begin("~/.vim/plugged")
   " Theme
   Plug 'dracula/vim'
+  Plug 'morhetz/gruvbox'
   Plug 'vim-airline/vim-airline'
   Plug 'vim-airline/vim-airline-themes'
   Plug 'airblade/vim-gitgutter'
@@ -29,6 +30,7 @@ endif
 
 " Theme
 syntax enable
+let g:gruvbox_contrast_dark = 'soft'
 colorscheme dracula
 
 let g:NERDTreeShowHidden = 1
