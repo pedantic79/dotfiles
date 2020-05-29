@@ -85,7 +85,7 @@ set encoding=UTF-8
 " Mine
 command Hidechars set invlist invnumber | GitGutterToggle
 set number
-set list lcs=tab:→\ ,trail:·,precedes:«,extends:»,eol:¬
+set list lcs=tab:⇥\ ,trail:·,precedes:«,extends:»,eol:¬
 set colorcolumn=81,121
 set spell
 " set cursorline
