@@ -6,7 +6,7 @@ call plug#begin("~/.vim/plugged")
   Plug 'vim-airline/vim-airline-themes'
   Plug 'airblade/vim-gitgutter'
 
-  if has('node')
+  if executable("node")
     " Language Client
     Plug 'neoclide/coc.nvim', {'branch': 'release'}
     let g:coc_global_extensions = ['coc-emmet', 'coc-css', 'coc-html', 'coc-json', 'coc-prettier', 'coc-tsserver', 'coc-go', 'coc-rust-analyzer']
