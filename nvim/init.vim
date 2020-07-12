@@ -6,6 +6,9 @@ call plug#begin("~/.vim/plugged")
   Plug 'vim-airline/vim-airline-themes'
   Plug 'airblade/vim-gitgutter'
 
+  " GUI enhancement
+  Plug 'machakann/vim-highlightedyank'
+
   if executable("node")
     " Language Client
     Plug 'neoclide/coc.nvim', {'branch': 'release'}
@@ -16,11 +19,17 @@ call plug#begin("~/.vim/plugged")
   Plug 'leafgarland/typescript-vim'
   Plug 'peitalin/vim-jsx-typescript'
 
+  " Rust
+  if executable("rustc")
+    Plug 'rust-lang/rust.vim'
+  endif
+
   " File Explorer with Icons
   Plug 'scrooloose/nerdtree'
   Plug 'ryanoasis/vim-devicons'
 
   " File Search
+  " Plug 'airblade/vim-rooter'
   Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
   Plug 'junegunn/fzf.vim'
 call plug#end()
@@ -90,4 +99,25 @@ set number
 set list lcs=tab:⇥\ ,trail:·,precedes:«,extends:»,eol:¬
 set colorcolumn=81,121
 set spell
+let g:rustfmt_autosave = 1
 " set cursorline
+
+" jonhoo
+" Use tab for trigger completion with characters ahead and navigate.
+" Use command ':verbose imap <tab>' to make sure tab is not mapped by other plugin.
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+" Use <c-.> to trigger completion.
+inoremap <silent><expr> <c-.> coc#refresh()
+" Use <cr> to confirm completion, `<C-g>u` means break undo chain at current position.
+" Coc only does snippet and additional edit on confirm.
+" inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+" Or use `complete_info` if your vim support it, like:
+inoremap <expr> <cr> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u\<CR>"
