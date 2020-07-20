@@ -9,7 +9,7 @@ call plug#begin("~/.vim/plugged")
   " GUI enhancement
   Plug 'machakann/vim-highlightedyank'
 
-  if executable("node")
+  if executable("node") && has('nvim-0.4.3')
     " Language Client
     Plug 'neoclide/coc.nvim', {'branch': 'release'}
     let g:coc_global_extensions = ['coc-emmet', 'coc-css', 'coc-html', 'coc-json', 'coc-prettier', 'coc-tsserver', 'coc-go', 'coc-rust-analyzer']
