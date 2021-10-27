@@ -99,6 +99,9 @@ set number
 set list lcs=tab:⇥\ ,trail:·,precedes:«,extends:»,eol:¬
 set colorcolumn=81,121
 set spell
+set expandtab
+set softtabstop=4
+set shiftwidth=4
 let g:rustfmt_autosave = 1
 " set cursorline
 
@@ -123,3 +126,4 @@ if executable("node") && has('nvim-0.4.3')
   " Or use `complete_info` if your vim support it, like:
   inoremap <expr> <cr> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u\<CR>"
 endif
+
