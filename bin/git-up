@@ -25,7 +25,13 @@ main_or_master() {
     exit 1
 }
 
-readarray -t remotes < <(git remote)
+
+# readarray doesn't work in MacOS
+declare -a remotes
+while read -r line; do
+    remotes+=($line)
+done < <(git remote)
+
 current="$(git symbolic-ref --short HEAD)"
 master=$(main_or_master)
 message="missing"
