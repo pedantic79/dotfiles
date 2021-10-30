@@ -49,7 +49,7 @@ ZSH_CUSTOM=~/.omz_custom
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(dnn git gitprompt cargo rust golang)
+plugins=(dnn git gitprompt docker cargo rust golang)
 
 if [ -f ~/.zshrc.local ]; then
     source ~/.zshrc.local
