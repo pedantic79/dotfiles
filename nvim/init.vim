@@ -42,6 +42,7 @@ endif
 " Theme
 syntax enable
 let g:gruvbox_contrast_dark = 'soft'
+let g:airline_powerline_fonts = 1
 colorscheme dracula
 
 let g:NERDTreeShowHidden = 1
