@@ -44,8 +44,7 @@ local servers = {
   "gopls",
   "jsonls",
   "yamlls",
-  "rust_analyzer",
-  "sumneko_lua"
+  "rust_analyzer"
 }
 
 for _, name in pairs(servers) do
