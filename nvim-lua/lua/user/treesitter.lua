@@ -6,30 +6,47 @@ end
 local languages = {
   "bash",
   "css",
-  "go",
   "dockerfile",
-  "go",
-  "gomod",
   "graphql",
-  "java",
   "javascript",
   "jsdoc",
   "json",
   "json5",
-  "kotlin",
   "make",
   "norg",
   "perl",
-  "python",
   "regex",
-  "ruby",
-  "rust",
   "scss",
   "toml",
   "typescript",
   "vim",
   "yaml"
 }
+
+if vim.fn.executable('go') == 1 then
+  table.insert(servers, 'go')
+  table.insert(servers, 'gomod')
+end
+
+if vim.fn.executable('cargo') == 1 then
+  table.insert(servers, 'rust')
+end
+
+if vim.fn.executable('ruby') == 1 then
+  table.insert(servers, 'ruby')
+end
+
+if vim.fn.executable('python') == 1 then
+  table.insert(servers, 'python')
+end
+
+if vim.fn.executable('kotlin') == 1 then
+  table.insert(servers, 'kotlin')
+end
+
+if vim.fn.executable('javac') == 1 then
+  table.insert(servers, 'java')
+end
 
 configs.setup {
   ensure_installed = languages, -- one of "all", "maintained" (parsers with maintainers), or a list of languages

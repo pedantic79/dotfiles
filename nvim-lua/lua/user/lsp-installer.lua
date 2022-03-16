@@ -41,11 +41,17 @@ lsp_installer.settings({
 -- Include the servers you want to have installed by default below
 local servers = {
   "bashls",
-  "gopls",
   "jsonls",
   "yamlls",
-  "rust_analyzer"
 }
+
+if vim.fn.executable('go') == 1 then
+  table.insert(servers, 'gopls')
+end
+
+if vim.fn.executable('cargo') == 1 then
+  table.insert(servers, 'rust_analyzer')
+end
 
 for _, name in pairs(servers) do
   local server_is_found, server = lsp_installer.get_server(name)

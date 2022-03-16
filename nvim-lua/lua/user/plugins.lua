@@ -51,7 +51,9 @@ return require('packer').startup({function(use)
 
   -- Languages
   -- use 'crispgm/nvim-go'
-  use 'ray-x/go.nvim'
+  if vim.fn.executable('go') == 1 then
+    use 'ray-x/go.nvim'
+  end
 
 
   -- Automatically set up your configuration after cloning packer.nvim
