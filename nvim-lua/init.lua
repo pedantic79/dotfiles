@@ -1,12 +1,11 @@
 -- global
-require('plugins')
-require('lsp')
-require('lsp-installer')
-require('completion')
-require('keybindings')
-require('config')
-require('treesitter')
--- require('go').setup({})
+require('user.plugins')
+require('user.lsp')
+require('user.lsp-installer')
+require('user.completion')
+require('user.keybindings')
+require('user.config')
+require('user.treesitter')
 
 
 vim.api.nvim_set_var('gruvbox_contrast_dark', 'soft')
@@ -17,4 +16,3 @@ vim.cmd [[command! Hidechars set invlist invnumber | GitGutterToggle]]
 vim.cmd [[colorscheme slate]]
 vim.cmd [[silent! colorscheme dracula]]
 vim.api.nvim_exec([[ autocmd BufWritePre *.go :silent! lua require('go.format').gofmt() ]], false)
-require('go').setup()
