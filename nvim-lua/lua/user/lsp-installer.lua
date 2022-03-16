@@ -39,11 +39,13 @@ lsp_installer.settings({
 })
 
 -- Include the servers you want to have installed by default below
-local servers = {
-  "bashls",
-  "jsonls",
-  "yamlls",
-}
+local servers = {}
+
+if vim.fn.executable('node') == 1 then
+  table.insert(servers, 'bashls')
+  table.insert(servers, 'jsonls')
+  table.insert(servers, 'yamlls')
+end
 
 if vim.fn.executable('go') == 1 then
   table.insert(servers, 'gopls')

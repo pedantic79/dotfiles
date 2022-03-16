@@ -24,28 +24,28 @@ local languages = {
 }
 
 if vim.fn.executable('go') == 1 then
-  table.insert(servers, 'go')
-  table.insert(servers, 'gomod')
+  table.insert(languages, 'go')
+  table.insert(languages, 'gomod')
 end
 
 if vim.fn.executable('cargo') == 1 then
-  table.insert(servers, 'rust')
+  table.insert(languages, 'rust')
 end
 
 if vim.fn.executable('ruby') == 1 then
-  table.insert(servers, 'ruby')
+  table.insert(languages, 'ruby')
 end
 
 if vim.fn.executable('python') == 1 then
-  table.insert(servers, 'python')
+  table.insert(languages, 'python')
 end
 
 if vim.fn.executable('kotlin') == 1 then
-  table.insert(servers, 'kotlin')
+  table.insert(languages, 'kotlin')
 end
 
 if vim.fn.executable('javac') == 1 then
-  table.insert(servers, 'java')
+  table.insert(languages, 'java')
 end
 
 configs.setup {
