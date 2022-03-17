@@ -14,3 +14,5 @@ end
 
 -- turn terminal to normal mode with escape
 keymap('t', '<Esc>', '<C-\\><C-n>', opts)
+
+keymap('n', '<C-b>', ':NvimTreeToggle<CR>', { noremap = true, silent = true })

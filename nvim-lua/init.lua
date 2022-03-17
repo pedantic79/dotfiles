@@ -6,6 +6,7 @@ require('user.completion')
 require('user.keybindings')
 require('user.config')
 require('user.treesitter')
+require('user.nvim-tree')
 
 
 vim.api.nvim_set_var('gruvbox_contrast_dark', 'soft')
