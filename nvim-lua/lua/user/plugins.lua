@@ -25,9 +25,6 @@ return require('packer').startup({function(use)
   -- use 'nvim-lua/plenary.nvim'
   -- use 'nvim-lua/popup.nvim'
 
-  -- Icons
-  use 'ryanoasis/vim-devicons'
-
   -- LSP
   use {
     'neovim/nvim-lspconfig',
@@ -35,6 +32,10 @@ return require('packer').startup({function(use)
   }
   use 'simrat39/rust-tools.nvim'
   use 'onsails/lspkind-nvim'
+
+  -- File exporer with icons
+  use 'kyazdani42/nvim-tree.lua'
+  use 'kyazdani42/nvim-web-devicons'
 
   -- Completion
   use 'hrsh7th/nvim-cmp'
