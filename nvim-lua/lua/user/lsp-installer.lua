@@ -39,7 +39,7 @@ lsp_installer.settings({
 })
 
 -- Include the servers you want to have installed by default below
-local servers = {}
+local servers = {'taplo'}
 
 if vim.fn.executable('node') == 1 then
   table.insert(servers, 'bashls')
@@ -53,6 +53,10 @@ end
 
 if vim.fn.executable('cargo') == 1 then
   table.insert(servers, 'rust_analyzer')
+end
+
+if vim.fn.executable('docker') == 1 then
+  table.insert(servers, 'dockerls')
 end
 
 for _, name in pairs(servers) do
