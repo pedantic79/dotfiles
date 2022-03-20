@@ -1,6 +1,6 @@
 local fn = vim.fn
 
-local install_path = fn.stdpath("data") .. "/site/pack/packer/opt/packer.nvim"
+local install_path = fn.stdpath('data') .. '/site/pack/packer/opt/packer.nvim'
 
 
 if fn.empty(fn.glob(install_path)) > 0 then
@@ -43,12 +43,12 @@ return require('packer').startup({function(use)
   use 'hrsh7th/cmp-path'
   use 'hrsh7th/cmp-nvim-lua'
   use 'hrsh7th/cmp-nvim-lsp'
-  use 'f3fora/cmp-spell'
+  -- use 'f3fora/cmp-spell'
 
   -- Treesitter
   use {
-    "nvim-treesitter/nvim-treesitter",
-    run = ":TSUpdate",
+    'nvim-treesitter/nvim-treesitter',
+    run = ':TSUpdate',
   }
 
   -- Languages

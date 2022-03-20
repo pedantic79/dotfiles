@@ -29,7 +29,7 @@ if not has_value(colors, scheme) then
     scheme = 'morning'
 end
 
-vim.cmd("colorscheme " .. scheme)
-vim.api.nvim_exec([[ autocmd BufWritePre *.go :silent! lua require('go.format').gofmt() ]], false)
-
+vim.cmd('colorscheme ' .. scheme)
 vim.cmd [[command! Hidechars set invlist invnumber | GitGutterToggle]]
+
+require('user.go')
