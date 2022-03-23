@@ -1,0 +1,6 @@
+#!/bin/bash
+
+HOMEBREW_PREFIX="/opt/homebrew";
+TERM=linux
+
+exec $HOMEBREW_PREFIX/bin/stack "$@"
