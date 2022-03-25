@@ -25,14 +25,12 @@ main_or_master() {
     exit 1
 }
 
-
 # readarray doesn't work in MacOS
 declare -a remotes
 while read -r line; do
-    remotes+=($line)
+    remotes+=("$line")
 done < <(git remote)
 
-current="$(git symbolic-ref --short HEAD)"
 master=$(main_or_master)
 message="missing"
 remote="origin"
@@ -45,14 +43,24 @@ for i in "${remotes[@]}"; do
     fi
 done
 
-# missing upstream
-echo "Upstream $message -- rebasing to $remote/$master"
-git checkout "$master"
 git fetch --all
+remote_master=$(git rev-parse --short "$remote/$master")
+local_master=$(git rev-parse --short "$master")
+
+if [ "$remote_master" == "$local_master" ]; then
+    echo "$remote/$master and $master are on the same commit: $local_master"
+    exit 0
+fi
+
+original_branch="$(git symbolic-ref --short HEAD)"
+# missing upstream
+echo "Remot upstream $message -- rebasing to $remote/$master"
+git checkout "$master"
 git rebase "$remote/$master"
 
 if [ "$remote" == "upstream" ]; then
+    echo "$remote detected \`git push $master\`"
     git push
 fi
 
-git checkout "$current"
+git checkout "$original_branch"
