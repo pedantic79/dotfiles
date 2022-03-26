@@ -62,12 +62,12 @@ fi
 original_branch="$(git symbolic-ref --short HEAD)"
 
 # missing upstream
-echo "${YELLOW}upstream $message -- rebasing to $remote/$master${NORMAL}"
+echo "${YELLOW}upstream $message -- rebasing $master to $remote/$master${NORMAL}"
 git checkout "$master"
 git rebase "$remote/$master"
 
 if [ "$remote" == "upstream" ]; then
-    echo "${YELLOW}$remote detected \`git push $master\`${NORMAL}"
+    echo "${YELLOW}$remote detected \`git push $master\` to tracking remote${NORMAL}"
     git push
 fi
 
