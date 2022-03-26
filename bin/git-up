@@ -54,7 +54,7 @@ git fetch --all
 remote_master=$(git rev-parse --short "$remote/$master")
 local_master=$(git rev-parse --short "$master")
 
-if [ "$remote_master" == "$local_master" ]; then
+if [ "$remote_master" = "$local_master" ]; then
     echo "${GREEN}$remote/$master and $master are on the same commit: ${local_master}${NORMAL}"
     exit 0
 fi
@@ -62,11 +62,12 @@ fi
 original_branch="$(git symbolic-ref --short HEAD)"
 
 # missing upstream
-echo "${YELLOW}upstream $message -- rebasing $master to $remote/$master${NORMAL}"
-git checkout "$master"
-git rebase "$remote/$master"
+echo "${YELLOW}upstream $message -- git rebase $remote/$master $master${NORMAL}"
+git rebase "$remote/$master" "$master"
+#git checkout "$master"
+#git rebase "$remote/$master"
 
-if [ "$remote" == "upstream" ]; then
+if [ "$remote" = "upstream" ]; then
     echo "${YELLOW}$remote detected \`git push $master\` to tracking remote${NORMAL}"
     git push
 fi
