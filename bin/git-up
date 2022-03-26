@@ -4,8 +4,15 @@ set -o errexit
 set -o pipefail
 set -o errtrace
 
+NORMAL=$(tput sgr0)
+RED=$(tput setaf 1)
+GREEN=$(tput setaf 2)
+YELLOW=$(tput setaf 220)
+
+declare -r NORMAL RED GREEN
+
 err_report() {
-    echo "Error running '$1' [rc=$2] line $3 "
+    echo "${RED}Error running '$1' [rc=$2] line ${3}${NORMAL}"
 }
 
 trap 'err_report "$BASH_COMMAND" $? $LINENO' ERR
@@ -21,7 +28,7 @@ main_or_master() {
         esac
     done < <(git for-each-ref --format '%(refname:short)' refs/heads/)
 
-    echo "main or master branch is not found... abort"
+    echo "${RED}main or master branch is not found... abort${NORMAL}"
     exit 1
 }
 
@@ -48,18 +55,19 @@ remote_master=$(git rev-parse --short "$remote/$master")
 local_master=$(git rev-parse --short "$master")
 
 if [ "$remote_master" == "$local_master" ]; then
-    echo "$remote/$master and $master are on the same commit: $local_master"
+    echo "${GREEN}$remote/$master and $master are on the same commit: ${local_master}${NORMAL}"
     exit 0
 fi
 
 original_branch="$(git symbolic-ref --short HEAD)"
+
 # missing upstream
-echo "Remot upstream $message -- rebasing to $remote/$master"
+echo "${YELLOW}upstream $message -- rebasing to $remote/$master${NORMAL}"
 git checkout "$master"
 git rebase "$remote/$master"
 
 if [ "$remote" == "upstream" ]; then
-    echo "$remote detected \`git push $master\`"
+    echo "${YELLOW}$remote detected \`git push $master\`${NORMAL}"
     git push
 fi
 
