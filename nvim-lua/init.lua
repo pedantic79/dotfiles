@@ -31,5 +31,6 @@ end
 
 vim.cmd('colorscheme ' .. scheme)
 vim.cmd [[command! Hidechars set invlist invnumber | GitGutterToggle]]
+vim.cmd [[autocmd BufEnter * ++nested if winnr('$') == 1 && bufname() == 'NvimTree_' . tabpagenr() | quit | endif]]
 
 require('user.go')
