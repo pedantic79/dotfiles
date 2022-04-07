@@ -45,6 +45,9 @@ if vim.fn.executable('node') == 1 then
   table.insert(servers, 'bashls')
   table.insert(servers, 'jsonls')
   table.insert(servers, 'yamlls')
+  if vim.fn.executable('docker') == 1 then
+    table.insert(servers, 'dockerls')
+  end
 end
 
 if vim.fn.executable('go') == 1 then
@@ -57,13 +60,9 @@ if vim.fn.executable('cargo') == 1 then
    table.insert(servers, 'rust_analyzer')
 end
 
-if vim.fn.executable('docker') == 1 then
-  table.insert(servers, 'dockerls')
-end
-
 if vim.fn.executable('black') == 1 then
-  table.insert(servers, 'pyls')
-  table.insert(servers, 'pyright')
+  table.insert(servers, 'pylsp')
+  table.insert(servers, 'pyright') -- npm
   table.insert(servers, 'jedi_language_server')
 end
 
