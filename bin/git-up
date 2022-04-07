@@ -68,8 +68,8 @@ git rebase "$remote/$master" "$master"
 #git rebase "$remote/$master"
 
 if [ "$remote" = "upstream" ]; then
-    echo "${YELLOW}$remote detected \`git push $master\` to tracking remote${NORMAL}"
-    git push
+    echo "${YELLOW}$remote $message -- git push origin $master${NORMAL}"
+    git push origin "$master"
 fi
 
 git checkout "$original_branch"
