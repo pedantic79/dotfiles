@@ -31,3 +31,5 @@
 	prune = true
 [diff]
 	wsErrorHighlight = all
+[url "https://"]
+	insteadOf = git://
