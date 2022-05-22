@@ -40,15 +40,24 @@ done < <(git remote)
 
 master=$(main_or_master)
 message="missing"
-remote="origin"
+remote=""
 
 for i in "${remotes[@]}"; do
     if [ "$i" = "upstream" ]; then
         message="Detected"
         remote="upstream"
         break
+    elif [ "$i" = "origin" ]; then
+        message="missing"
+        remote="origin"
+        break
     fi
 done
+
+if [ -z "$remote" ]; then
+    echo "${RED}origin branch is not found... abort${NORMAL}"
+    exit 1
+fi
 
 git fetch --all
 remote_master=$(git rev-parse --short "$remote/$master")
