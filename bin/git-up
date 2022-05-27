@@ -43,13 +43,17 @@ message="missing"
 remote=""
 
 for i in "${remotes[@]}"; do
+    if [ "$i" = "origin" ]; then
+        message="missing"
+        remote="origin"
+        break
+    fi
+done
+
+for i in "${remotes[@]}"; do
     if [ "$i" = "upstream" ]; then
         message="Detected"
         remote="upstream"
-        break
-    elif [ "$i" = "origin" ]; then
-        message="missing"
-        remote="origin"
         break
     fi
 done
