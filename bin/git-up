@@ -6,8 +6,9 @@ set -o errtrace
 
 NORMAL=$(tput sgr0)
 RED=$(tput setaf 1)
-YELLOW=$(tput setaf 220)
+YELLOW=$(tput setaf 227)
 GREEN=$(tput setaf 2)
+BLUE=$(tput setaf 69)
 
 declare -r NORMAL RED YELLOW GREEN
 
@@ -44,7 +45,7 @@ remote=""
 
 for i in "${remotes[@]}"; do
     if [ "$i" = "origin" ]; then
-        message="missing"
+        message="${YELLOW}upstream missing using origin${NORMAL}"
         remote="origin"
         break
     fi
@@ -63,6 +64,8 @@ if [ -z "$remote" ]; then
     exit 1
 fi
 
+echo "$message"
+echo "${BLUE}>> git fetch --all${NORMAL}"
 git fetch --all
 remote_master=$(git rev-parse --short "$remote/$master")
 local_master=$(git rev-parse --short "$master")
@@ -75,13 +78,13 @@ fi
 original_branch="$(git symbolic-ref --short HEAD)"
 
 # missing upstream
-echo "${YELLOW}upstream $message -- git rebase $remote/$master $master${NORMAL}"
+echo "${BLUE}>> git rebase $remote/$master $master${NORMAL}"
 git rebase "$remote/$master" "$master"
 #git checkout "$master"
 #git rebase "$remote/$master"
 
 if [ "$remote" = "upstream" ]; then
-    echo "${YELLOW}$remote $message -- git push origin $master${NORMAL}"
+    echo "${BLUE}>> git push origin $master${NORMAL}"
     git push origin "$master"
 fi
 
