@@ -66,7 +66,7 @@ if [ -z "$remote" ]; then
     exit 1
 fi
 
-echo -n "$message  "
+printf "%-55s" "$message"
 echo "${PROMPT}${CMD_COLOR} git fetch --all${NORMAL}"
 git fetch --all
 remote_master=$(git rev-parse --short "$remote/$master")
@@ -77,15 +77,15 @@ if [ "$remote_master" = "$local_master" ]; then
     exit 0
 fi
 
-original_branch="$(git symbolic-ref --short HEAD)"
+#original_branch="$(git symbolic-ref --short HEAD)"
 
 # missing upstream
-echo -n "${YELLOW}rebasing $remote/$master to $master  "
+printf "%-55s" "${YELLOW}rebasing $remote/$master to $master${NORMAL}"
 echo "${PROMPT}${CMD_COLOR} git rebase $remote/$master $master${NORMAL}"
 git rebase "$remote/$master" "$master"
 
 if [ "$remote" = "upstream" ]; then
-    echo -n "${YELLOW}pushing to origin/$master  "
+    printf "%-55s" "${YELLOW}pushing to origin/$master${NORMAL}"
     echo "${PROMPT}${CMD_COLOR} git push origin $master${NORMAL}"
     git push origin "$master"
 fi
