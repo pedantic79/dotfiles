@@ -6,9 +6,9 @@ set -o errtrace
 
 NORMAL=$(tput sgr0)
 RED=$(tput setaf 1)
-YELLOW=$(tput setaf 227)
+YELLOW=$(tput setaf 220)
 GREEN=$(tput setaf 34)
-BLUE=$(tput setaf 69)
+CMD_COLOR=$(tput setaf 199)
 ORANGE=$(tput setaf 208)
 PROMPT="${ORANGE}»"
 
@@ -67,7 +67,7 @@ if [ -z "$remote" ]; then
 fi
 
 echo -n "$message  "
-echo "${PROMPT}${BLUE} git fetch --all${NORMAL}"
+echo "${PROMPT}${CMD_COLOR} git fetch --all${NORMAL}"
 git fetch --all
 remote_master=$(git rev-parse --short "$remote/$master")
 local_master=$(git rev-parse --short "$master")
@@ -80,14 +80,12 @@ fi
 original_branch="$(git symbolic-ref --short HEAD)"
 
 # missing upstream
-echo "${PROMPT}${BLUE} git rebase $remote/$master $master${NORMAL}"
+echo -n "${YELLOW}rebasing $remote/$master to $master  "
+echo "${PROMPT}${CMD_COLOR} git rebase $remote/$master $master${NORMAL}"
 git rebase "$remote/$master" "$master"
-#git checkout "$master"
-#git rebase "$remote/$master"
 
 if [ "$remote" = "upstream" ]; then
-    echo "${PROMPT}${BLUE} git push origin $master${NORMAL}"
+    echo -n "${YELLOW}pushing to origin/$master  "
+    echo "${PROMPT}${CMD_COLOR} git push origin $master${NORMAL}"
     git push origin "$master"
 fi
-
-git checkout "$original_branch"
