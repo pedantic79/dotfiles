@@ -55,8 +55,8 @@ done
 
 for i in "${remotes[@]}"; do
     if [ "$i" = "upstream" ]; then
-        message="Detected"
         remote="upstream"
+        message="${YELLOW}Detected ${remote}${NORMAL}"
         break
     fi
 done
