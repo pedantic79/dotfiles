@@ -47,8 +47,16 @@ lsp_installer.setup({
 })
 
 for _, server in pairs(servers) do
-	local opts = {
-		on_attach = on_attach,
-	}
-	lspconfig[server].setup(opts)
+  local opts = {
+    on_attach = on_attach,
+  }
+  if server == 'rust_analyzer' then
+    -- use rust-tools instead of rust_analyzer
+    local rust_tools = require("rust-tools")
+    rust_tools.setup {
+      server = { on_attach = on_attach }
+    }
+  else
+    lspconfig[server].setup(opts)
+  end
 end
