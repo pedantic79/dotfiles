@@ -54,7 +54,16 @@ for _, server in pairs(servers) do
     -- use rust-tools instead of rust_analyzer
     local rust_tools = require("rust-tools")
     rust_tools.setup {
-      server = { on_attach = on_attach }
+      server = {
+        on_attach = on_attach,
+        settings = {
+          ['rust-analyzer'] = {
+            checkOnSave = {
+              command = 'clippy'
+            }
+          }
+        }
+      }
     }
   else
     lspconfig[server].setup(opts)
