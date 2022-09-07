@@ -1,8 +1,6 @@
 [user]
 	name = Dan Nguyen
 	email = pedantic@gmail.com
-[include]
-	path = ~/.gitconfig.local
 [color]
 	ui = auto
 [merge]
@@ -35,3 +33,5 @@
 	insteadOf = git://
 [init]
 	defaultBranch = main
+[include]
+	path = ~/.gitconfig.local
