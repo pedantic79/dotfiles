@@ -8,6 +8,7 @@ TS_LIST+="llvm make norg"
 rm -rf "$HOME/.local/share/nvim/" "$HOME/.cache/nvim" "$HOME/.config/nvim/plugin"
 nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync' && \
     nvim --headless -c "TSInstallSync $TS_LIST" -c "quitall" && \
-    nvim --headless -c "sleep 90" -c "quitall"
+    nvim --headless -c "sleep 30" -c "quitall" && \
+    nvim --headless -c "sleep 30" -c "quitall"
 
 date
