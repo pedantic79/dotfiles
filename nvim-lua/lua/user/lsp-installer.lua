@@ -63,6 +63,12 @@ for _, server in pairs(servers) do
             }
           }
         }
+      },
+      tools = {
+        inlay_hints = {
+          parameter_hints_prefix = "ﰯ", -- nf-mdi-border_left
+          other_hints_prefix = "", -- nf-fa-long_arrow_right
+        }
       }
     }
   else

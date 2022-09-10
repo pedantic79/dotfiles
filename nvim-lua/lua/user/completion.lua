@@ -42,13 +42,14 @@ cmp.setup {
     { name = 'path' },
     { name = 'nvim_lua' },
     { name = 'nvim_lsp' },
-    { name = 'buffer', keyword_length = 5 }
+    { name = 'buffer', keyword_length = 5 },
+    { name = 'vsnip' }
   },
-  -- snippets = {
-  --   expand = function(args)
-  --     require('luasnip').lsp_expand(args.body)
-  --   end,
-  -- },
+  snippet = {
+    expand = function(args)
+        vim.fn["vsnip#anonymous"](args.body)
+    end,
+  },
 
   formatting = {
     format = lspkind.cmp_format {
