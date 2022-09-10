@@ -55,7 +55,10 @@ for _, server in pairs(servers) do
     local rust_tools = require("rust-tools")
     rust_tools.setup {
       server = {
-        on_attach = on_attach,
+        on_attach = function (_, bufnr)
+          -- vim.keymap.set("n", "<C-space>", rust_tools.hover_actions.hover_actions, { buffer = bufnr })
+          vim.keymap.set("n", "<C-.>", rust_tools.code_action_group.code_action_group, { buffer = bufnr })
+        end,
         settings = {
           ['rust-analyzer'] = {
             checkOnSave = {
@@ -67,7 +70,7 @@ for _, server in pairs(servers) do
       tools = {
         inlay_hints = {
           parameter_hints_prefix = "ﰯ", -- nf-mdi-border_left
-          other_hints_prefix = "", -- nf-fa-long_arrow_right
+          other_hints_prefix = "", -- nf-oct-triangle_right
         }
       }
     }
