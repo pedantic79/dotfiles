@@ -27,8 +27,9 @@ return require('packer').startup({function(use)
 
   -- LSP
   use {
-    'neovim/nvim-lspconfig',
-    'williamboman/nvim-lsp-installer',
+    "williamboman/mason.nvim",
+    "williamboman/mason-lspconfig.nvim",
+    "neovim/nvim-lspconfig",
   }
   use 'simrat39/rust-tools.nvim'
   use 'onsails/lspkind-nvim'

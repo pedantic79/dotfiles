@@ -1,9 +1,9 @@
-local status_ok, lsp_installer = pcall(require, 'nvim-lsp-installer')
+local status_ok, lsp_installer = pcall(require, 'mason')
 if not status_ok then
   return
 end
 
-lsp_installer.settings({
+lsp_installer.setup({
   ui = {
       icons = {
           server_installed = '✓',
@@ -42,7 +42,8 @@ if vim.fn.executable('black') == 1 then
 end
 
 local lspconfig = require("lspconfig")
-lsp_installer.setup({
+
+require("mason-lspconfig").setup({
   ensure_installed = servers,
 })
 
