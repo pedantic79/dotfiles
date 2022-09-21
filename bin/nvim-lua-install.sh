@@ -10,4 +10,5 @@ nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync' && \
     nvim --headless -c "TSInstallSync $TS_LIST" -c "sleep 30" -c "quitall" && \
     nvim --headless -c "sleep 30" -c "quitall"
 
+echo ""
 date
