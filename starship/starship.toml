@@ -1,0 +1,27 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+palette = "no-bold"
+
+[package]
+disabled = true
+
+[directory]
+truncation_length = 6
+truncation_symbol = "…/"
+truncate_to_repo = false
+repo_root_style = "bold green"
+
+[git_branch]
+style = "bold maroon"
+symbol = ""
+
+[git_status]
+format = '([⎣$all_status⎤]($style) )'
+style = "bold orange"
+stashed = "§"
+modified = "•"
+untracked = "!"
+
+[palettes.no-bold]
+maroon = "199"
+cyan = "039"
+orange = "208"
