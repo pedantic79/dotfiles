@@ -51,6 +51,10 @@ ZSH_CUSTOM=~/.omz_custom
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(dnn git gitprompt docker rust golang)
 
+if [ -f ~/.zsh-work ]; then
+    plugins+=(dnn-work)
+fi
+
 if [ -f ~/.zshrc.local ]; then
     source ~/.zshrc.local
 fi
