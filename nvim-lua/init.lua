@@ -1,7 +1,7 @@
 -- global
 require('user.plugins')
 require('user.lsp')
-require('user.lsp-installer')
+require('user.mason')
 require('user.completion')
 require('user.keybindings')
 require('user.config')
