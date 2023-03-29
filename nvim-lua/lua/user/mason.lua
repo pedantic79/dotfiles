@@ -79,3 +79,7 @@ for _, server in pairs(servers) do
     lspconfig[server].setup(opts)
   end
 end
+
+vim.api.nvim_create_user_command("LspInstallAll", function()
+  vim.cmd("LspInstall " .. table.concat(servers, " "))
+end, {})
