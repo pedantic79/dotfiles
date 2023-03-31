@@ -75,6 +75,14 @@ for _, server in pairs(servers) do
         }
       }
     }
+  elseif server == 'yamlls' then
+    lspconfig[server].setup {
+      settings = {
+        yaml = {
+          keyOrdering = false,
+        }
+      }
+    }
   else
     lspconfig[server].setup(opts)
   end
