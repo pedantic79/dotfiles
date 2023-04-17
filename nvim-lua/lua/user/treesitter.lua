@@ -15,8 +15,13 @@ local ignore_list = { 'agda', 'astro', 'beancount', 'bibtex', 'blueprint',
   'teal', 'tiger', 'tlaplus', 'todotxt', 'turtle', 'twig', 'v', 'vala',
   'verilog', 'vue', 'wgsl', 'yang' }
 
+local e_ins = 'all'
+if vim.fn.executable('cc') ~= 1 then
+  e_ins = {}
+end
+
 configs.setup {
-  ensure_installed = 'all', -- one of 'all', 'maintained' (parsers with maintainers), or a list of languages
+  ensure_installed = e_ins, -- one of 'all', 'maintained' (parsers with maintainers), or a list of languages
   sync_install = true, -- install languages synchronously (only applied to `ensure_installed`)
   ignore_install = ignore_list, -- List of parsers to ignore installing
   autopairs = {
