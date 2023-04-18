@@ -12,6 +12,8 @@ end
 
 local tree_cb = nvim_tree_config.nvim_tree_callback
 
+require('nvim-tree-on_attach')
+
 nvim_tree.setup {
   disable_netrw = true,
   hijack_netrw = true,
@@ -69,17 +71,13 @@ nvim_tree.setup {
       }
     }
   },
+  on_attach = on_attach,
   view = {
     width = 30,
     hide_root_folder = false,
     side = 'left',
     mappings = {
       custom_only = false,
-      list = {
-        { key = { 'l', '<CR>', 'o' }, cb = tree_cb 'edit' },
-        { key = 'h', cb = tree_cb 'close_node' },
-        { key = 'v', cb = tree_cb 'vsplit' },
-      },
     },
     number = false,
     relativenumber = false,
