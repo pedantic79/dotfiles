@@ -12,7 +12,7 @@ end
 
 local tree_cb = nvim_tree_config.nvim_tree_callback
 
-require('nvim-tree-on_attach')
+require('user.nvim-tree-on_attach')
 
 nvim_tree.setup {
   disable_netrw = true,
