@@ -90,3 +90,4 @@ source $ZSH/oh-my-zsh.sh
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
+export PROMPT_EOL_MARK='%F{red}%B⏎%b%F{reset}'
