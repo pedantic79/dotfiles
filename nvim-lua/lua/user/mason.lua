@@ -70,8 +70,8 @@ for _, server in pairs(servers) do
       },
       tools = {
         inlay_hints = {
-          parameter_hints_prefix = "ﰯ", -- nf-mdi-border_left
-          other_hints_prefix = "", -- nf-oct-triangle_right
+          parameter_hints_prefix = " 󰘀", -- nf-md-page_first
+          other_hints_prefix = "󰨃 ", -- nf-md-menu_right_outline
         }
       }
     }
