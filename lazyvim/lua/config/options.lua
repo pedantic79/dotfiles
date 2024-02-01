@@ -4,6 +4,7 @@
 vim.opt.listchars = { tab = "⇥ ", trail = "·", precedes = "«", extends = "»", eol = "¬" }
 vim.opt.colorcolumn = "81,121"
 vim.opt.tabstop = 4
+vim.opt.shiftwidth = 4
 
 vim.api.nvim_create_user_command("Hidechars", function()
   vim.cmd([[set invlist invrelativenumber invnumber]])
