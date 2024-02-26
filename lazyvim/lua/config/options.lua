@@ -7,6 +7,9 @@ vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
 
 vim.api.nvim_create_user_command("Hidechars", function()
-  vim.cmd([[set invlist invrelativenumber invnumber]])
-  vim.cmd([[IBLToggle]])
+  vim.o.signcolumn = vim.o.signcolumn == "yes" and "no" or "yes"
+  vim.o.list = not vim.o.list
+  vim.o.relativenumber = not vim.o.relativenumber
+  vim.o.number = not vim.o.number
+  vim.cmd.IBLToggle()
 end, {})
