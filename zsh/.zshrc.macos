@@ -1,1 +1,1 @@
-plugins+=(macos ripgrep dnn-work)
+plugins+=(macos brew dnn-work)
