@@ -13,7 +13,8 @@
 	trustExitCode = true
 [alias]
 	tree = log --graph --decorate --oneline --remotes=origin --remotes=upstream --decorate-refs=refs/remotes/origin --decorate-refs=refs/remotes/upstream --decorate-refs=refs/heads
-	lol = log --graph --decorate --pretty=oneline --abbrev-commit --branches --tags --remotes
+	lol = log --graph --decorate --pretty=oneline --abbrev-commit --branches --tags
+	lolr = log --graph --decorate --pretty=oneline --abbrev-commit --branches --tags --remotes
 	lf = log --graph --decorate --pretty=fuller --abbrev-commit --exclude='refs/notes/review' --exclude='refs/stash' --all --name-status
 	lp = "!f() { git log --pretty=fuller --abbrev-commit -p ${1:-HEAD^..HEAD}; }; f"
 	#dlpr = "!f() { local pr=${1:-ERROR}; git fetch upstream pull/$pr/head:pr-$pr && git checkout pr-$pr; }; f"
@@ -37,3 +38,5 @@
 	path = ~/.gitconfig.local
 [submodule]
 	recurse = true
+[branch]
+	sort = -committerdate

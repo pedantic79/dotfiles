@@ -15,30 +15,30 @@ PROMPT="${ORANGE}»"
 declare -r NORMAL RED YELLOW GREEN
 
 err_report() {
-    echo "${RED}Error running '$1' [rc=$2] line ${3}${NORMAL}"
+	echo "${RED}Error running '$1' [rc=$2] line ${3}${NORMAL}"
 }
 
 trap 'err_report "$BASH_COMMAND" $? $LINENO' ERR
 
 main_or_master() {
-    local b
-    while read -r b; do
-        case "$b" in
-            "main"|"master")
-                echo "$b"
-                return
-            ;;
-        esac
-    done < <(git for-each-ref --format '%(refname:short)' refs/heads/)
+	local b
+	while read -r b; do
+		case "$b" in
+		"main" | "master")
+			echo "$b"
+			return
+			;;
+		esac
+	done < <(git for-each-ref --format '%(refname:short)' refs/heads/)
 
-    echo "${RED}main or master branch is not found... abort${NORMAL}"
-    exit 1
+	echo "${RED}main or master branch is not found... abort${NORMAL}"
+	exit 1
 }
 
 # readarray doesn't work in MacOS
 declare -a remotes
 while read -r line; do
-    remotes+=("$line")
+	remotes+=("$line")
 done < <(git remote)
 
 master=$(main_or_master)
@@ -46,46 +46,53 @@ message="missing"
 remote=""
 
 for i in "${remotes[@]}"; do
-    if [ "$i" = "origin" ]; then
-        message="${YELLOW}upstream missing using origin${NORMAL}"
-        remote="origin"
-        break
-    fi
+	if [ "$i" = "origin" ]; then
+		message="${YELLOW}upstream missing using origin${NORMAL}"
+		remote="origin"
+		break
+	fi
 done
 
 for i in "${remotes[@]}"; do
-    if [ "$i" = "upstream" ]; then
-        remote="upstream"
-        message="${YELLOW}Detected ${remote}${NORMAL}"
-        break
-    fi
+	if [ "$i" = "upstream" ]; then
+		remote="upstream"
+		message="${YELLOW}Detected ${remote}${NORMAL}"
+		break
+	fi
 done
 
 if [ -z "$remote" ]; then
-    echo "${RED}origin branch is not found... abort${NORMAL}"
-    exit 1
+	echo "${RED}origin branch is not found... abort${NORMAL}"
+	exit 1
 fi
 
-printf "%-55s" "$message"
+printf "%-60s" "$message"
 echo "${PROMPT}${CMD_COLOR} git fetch --all --tags --prune${NORMAL}"
 git fetch --all --tags --prune
 remote_master=$(git rev-parse --short "$remote/$master")
 local_master=$(git rev-parse --short "$master")
 
 if [ "$remote_master" = "$local_master" ]; then
-    echo "${GREEN}$remote/$master and $master are on the same commit: ${local_master}${NORMAL}"
-    exit 0
+	echo "${GREEN}$remote/$master and $master are on the same commit: ${local_master}${NORMAL}"
+	exit 0
 fi
 
-#original_branch="$(git symbolic-ref --short HEAD)"
+original_branch="$(git symbolic-ref --short HEAD)"
 
 # missing upstream
-printf "%-55s" "${YELLOW}rebasing $remote/$master to $master${NORMAL}"
+printf "%-60s" "${YELLOW}rebasing $remote/$master to $master${NORMAL}"
 echo "${PROMPT}${CMD_COLOR} git rebase $remote/$master $master${NORMAL}"
 git rebase "$remote/$master" "$master"
 
 if [ "$remote" = "upstream" ]; then
-    printf "%-55s" "${YELLOW}pushing to origin/$master${NORMAL}"
-    echo "${PROMPT}${CMD_COLOR} git push origin $master${NORMAL}"
-    git push origin "$master"
+	printf "%-60s" "${YELLOW}pushing to origin/$master${NORMAL}"
+	echo "${PROMPT}${CMD_COLOR} git push origin $master${NORMAL}"
+	git push origin "$master"
+fi
+
+current_branch="$(git symbolic-ref --short HEAD)"
+if [ "$current_branch" != "$original_branch" ]; then
+	printf "%-60s" "${YELLOW}switching to $original_branch${NORMAL}"
+	echo "${PROMPT}${CMD_COLOR} git checkout $original_branch${NORMAL}"
+	git checkout "$original_branch"
 fi
