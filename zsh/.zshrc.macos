@@ -1,1 +1,1 @@
-plugins+=(macos brew dnn-work)
+plugins+=(macos dnn-work)
