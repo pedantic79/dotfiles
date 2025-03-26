@@ -1588,6 +1588,8 @@
 	<false/>
 	<key>TabStyleWithAutomaticOption</key>
 	<integer>2</integer>
+	<key>UnderlineHyperlinks</key>
+	<false/>
 	<key>VisualIndicatorForEsc</key>
 	<false/>
 	<key>findMode_iTerm</key>
