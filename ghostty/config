@@ -3,3 +3,4 @@ theme = Monokai Soda
 window-height = 40
 window-width = 160
 window-inherit-working-directory = false
+clipboard-read = allow
