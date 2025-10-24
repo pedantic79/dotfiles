@@ -1,6 +1,7 @@
 #!/bin/bash
 
 OS=$(uname -s)
+ARCH=$(uname -m)
 if [ "$OS" = "Darwin" ]; then
     brew upgrade &&
         brew cleanup -s --prune 0 &&
@@ -14,11 +15,15 @@ elif [ "$OS" = "Linux" ]; then
         sudo apt -y upgrade && sudo apt -y upgrade
     fi
 
-    if [ -x "$HOME/.appimage/appimageupdatetool-$(uname -m).AppImage" ]; then
+    if [ -x "$HOME/.appimage/appimageupdatetool-$ARCH.AppImage" ]; then
         for i in "$HOME/.appimage/"*.[Aa]pp[Ii]mage; do
-            "$HOME/.appimage/appimageupdatetool-$(uname -m).AppImage" "$i"
+            "$HOME/.appimage/appimageupdatetool-$ARCH.AppImage" "$i"
         done
     fi
 else
-    echo "ERROR unsupport $(uname -s)"
+    echo "ERROR unsupport $OS"
+fi
+
+if [ -n "$ZSH" ] && [ -d "$ZSH" ]; then
+    "$ZSH/tools/upgrade.sh"
 fi
