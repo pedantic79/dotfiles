@@ -2,6 +2,16 @@
 
 set -e
 
+update_rust() {
+    if [ -x "$HOME/.cargo/bin/rustup" ]; then
+        rustup update "$(rustup toolchain list | awk '/default/ {print $1}')"
+    fi
+
+    if [ -e "$HOME/.cargo/bin/cargo-install-update" ]; then
+        cargo install-update --all
+    fi
+}
+
 OS=$(uname -s)
 ARCH=$(uname -m)
 if [ "$OS" = "Darwin" ]; then
@@ -11,13 +21,7 @@ if [ "$OS" = "Darwin" ]; then
     (cd ~/.dotfiles && git up)
     (cd ~/.omz_custom && git up)
 
-    if [ -x "$HOME/.cargo/bin/rustup" ]; then
-        rustup update "$(rustup toolchain list | awk '/default/ {print $1}')"
-    fi
-
-    if [ -e "$HOME/.cargo/bin/cargo-install-update" ]; then
-        cargo install-update --all
-    fi
+    update_rust
 elif [ "$OS" = "Linux" ]; then
     if [ -e "/etc/debian_version" ]; then
         sudo apt -y upgrade && sudo apt -y upgrade
@@ -25,6 +29,8 @@ elif [ "$OS" = "Linux" ]; then
 
     (cd ~/.dotfiles && git up)
     (cd ~/.omz_custom && git up)
+
+    update_rust
 
     if [ -x "$HOME/.appimage/appimageupdatetool-$ARCH.AppImage" ]; then
         for i in "$HOME/.appimage/"*.[Aa]pp[Ii]mage; do
