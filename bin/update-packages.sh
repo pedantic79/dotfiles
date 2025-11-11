@@ -15,6 +15,11 @@ update_rust() {
 OS=$(uname -s)
 ARCH=$(uname -m)
 if [ "$OS" = "Darwin" ]; then
+    brew update
+    if ! brew outdated ibm-cloud-cli; then
+        # ibm-cloud-cli requires sudo access, and it's better to ask up front
+        sudo whoami
+    fi
     brew upgrade
     brew cleanup -s --prune 0
 
