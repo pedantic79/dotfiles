@@ -48,5 +48,6 @@ else
 fi
 
 if [ -n "$ZSH" ] && [ -d "$ZSH" ]; then
-    "$ZSH/tools/upgrade.sh"
+    "$ZSH/tools/upgrade.sh" &&
+        echo "LAST_EPOCH=$((EPOCHSECONDS / 60 / 60 / 24))" "${ZSH_CACHE_DIR}/.zsh-update" >!
 fi
