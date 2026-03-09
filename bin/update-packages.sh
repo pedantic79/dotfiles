@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -e
 
@@ -49,5 +49,5 @@ fi
 
 if [ -n "$ZSH" ] && [ -d "$ZSH" ]; then
     "$ZSH/tools/upgrade.sh" &&
-        echo "LAST_EPOCH=$((EPOCHSECONDS / 60 / 60 / 24))" "${ZSH_CACHE_DIR}/.zsh-update" >!
+        printf 'LAST_EPOCH=%d\n' $((EPOCHSECONDS / 86400)) >|"$ZSH/cache/.zsh-update"
 fi
