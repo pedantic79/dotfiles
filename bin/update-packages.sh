@@ -29,7 +29,7 @@ if [ "$OS" = "Darwin" ]; then
     update_rust
 elif [ "$OS" = "Linux" ]; then
     if [ -e "/etc/debian_version" ]; then
-        sudo apt -y upgrade && sudo apt -y upgrade
+        sudo apt -y update && sudo apt -y upgrade
     fi
 
     (cd ~/.dotfiles && git up)
