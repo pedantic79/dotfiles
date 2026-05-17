@@ -13,3 +13,9 @@ vim.api.nvim_create_user_command("Hidechars", function()
   vim.o.number = not vim.o.number
   vim.cmd.IBLToggle()
 end, {})
+
+-- osc52 SSH/override
+if vim.env.SSH_TTY or vim.uv.fs_stat(vim.fn.expand("~/.config/container")) ~= nil then
+  vim.g.clipboard = "osc52"
+  vim.opt.clipboard = "unnamedplus"
+end
