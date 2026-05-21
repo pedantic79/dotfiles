@@ -1,6 +1,6 @@
 quit-after-last-window-closed = true
 theme = Monokai Soda
-window-height = 40
+window-height = 48
 window-width = 160
 clipboard-read = allow
 working-directory = home
