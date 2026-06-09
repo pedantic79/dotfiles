@@ -26,6 +26,7 @@
 	prompt = false
 [core]
 	autocrlf = input
+	excludesfile = ~/.gitignore_global
 [fetch]
 	prune = true
 [diff]

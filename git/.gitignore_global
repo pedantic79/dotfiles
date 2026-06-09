@@ -1,0 +1,15 @@
+# macOS operating system junk
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows operating system junk
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# JetBrains IDEs (IntelliJ, WebStorm, etc.)
+.idea/
+
+# Gemini
+.agents/
