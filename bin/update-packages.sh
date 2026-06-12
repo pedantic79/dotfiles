@@ -8,7 +8,11 @@ update_rust() {
     fi
 
     if [ -e "$HOME/.cargo/bin/cargo-install-update" ]; then
-        cargo install-update --all
+        if [ -x "$HOME/.cargo/bin/rustup" ] && rustup toolchain list | grep -q '^stable'; then
+            cargo +stable install-update --all
+        else
+            cargo install-update --all
+        fi
     fi
 }
 
