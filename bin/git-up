@@ -20,19 +20,29 @@ err_report() {
 
 trap 'err_report "$BASH_COMMAND" $? $LINENO' ERR
 
-main_or_master() {
-	local b
-	while read -r b; do
-		case "$b" in
-		"main" | "master")
-			echo "$b"
-			return
-			;;
-		esac
-	done < <(git for-each-ref --format '%(refname:short)' refs/heads/)
-
-	echo "${RED}main or master branch is not found... abort${NORMAL}"
+if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+	echo "$(basename "$PWD") isn't a git project."
 	exit 1
+fi
+
+main_or_master() {
+	local ref
+	# Try to query the default branch from origin/HEAD
+	ref=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null)
+	if [[ -n "$ref" ]]; then
+		echo "${ref##*/}"
+		return
+	fi
+
+	# Fallback to checking local main/master
+	if git show-ref --verify --quiet refs/heads/main; then
+		echo "main"
+	elif git show-ref --verify --quiet refs/heads/master; then
+		echo "master"
+	else
+		echo "${RED}main or master branch is not found... abort${NORMAL}" >&2
+		exit 1
+	fi
 }
 
 # readarray doesn't work in MacOS
