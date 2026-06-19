@@ -20,7 +20,7 @@ OS=$(uname -s)
 ARCH=$(uname -m)
 if [ "$OS" = "Darwin" ]; then
     brew update
-    brew upgrade
+    brew upgrade --yes
     brew cleanup -s --prune 0
 
     (cd ~/.dotfiles && git up)
