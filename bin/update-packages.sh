@@ -1,14 +1,27 @@
 #!/usr/bin/env bash
 
-set -e
+# Exit immediately if a command exits with a non-zero status,
+# treat unset variables as an error, and prevent masking pipeline errors.
+set -euo pipefail
+
+# Setup colors for stdout messages if connected to a TTY
+if [ -t 1 ]; then
+    CYAN=$'\e[36m'
+    NORMAL=$'\e[0m'
+else
+    CYAN=""
+    NORMAL=""
+fi
 
 update_rust() {
-    if [ -x "$HOME/.cargo/bin/rustup" ]; then
-        rustup update "$(rustup toolchain list | awk '/default/ {print $1}')"
+    if command -v rustup >/dev/null 2>&1; then
+        echo "${CYAN}Updating Rust toolchains...${NORMAL}"
+        rustup update
     fi
 
-    if [ -e "$HOME/.cargo/bin/cargo-install-update" ]; then
-        if [ -x "$HOME/.cargo/bin/rustup" ] && rustup toolchain list | grep -q '^stable'; then
+    if command -v cargo-install-update >/dev/null 2>&1; then
+        echo "${CYAN}Updating cargo packages...${NORMAL}"
+        if command -v rustup >/dev/null 2>&1 && rustup toolchain list | grep -q '^stable'; then
             cargo +stable install-update --all
         else
             cargo install-update --all
@@ -16,38 +29,62 @@ update_rust() {
     fi
 }
 
+update_python() {
+    if command -v uv >/dev/null 2>&1; then
+        echo "${CYAN}Updating python tools...${NORMAL}"
+        # On Darwin/macOS, Homebrew manages upgrading uv.
+        if [ "${OS:-}" != "Darwin" ]; then
+            uv self update || true
+        fi
+        uv tool upgrade --all || true
+    fi
+}
+
+# Determine OS and Architecture
 OS=$(uname -s)
 ARCH=$(uname -m)
+
+echo "${CYAN}Running OS-specific package manager updates...${NORMAL}"
 if [ "$OS" = "Darwin" ]; then
-    brew update
-    brew upgrade --yes
-    brew cleanup -s --prune 0
-
-    (cd ~/.dotfiles && git up)
-    (cd ~/.omz_custom && git up)
-
-    update_rust
+    if command -v brew >/dev/null 2>&1; then
+        brew update
+        brew upgrade --yes
+        brew cleanup -s --prune 0
+    fi
 elif [ "$OS" = "Linux" ]; then
     if [ -e "/etc/debian_version" ]; then
         sudo apt -y update && sudo apt -y upgrade
     fi
 
-    (cd ~/.dotfiles && git up)
-    (cd ~/.omz_custom && git up)
-
-    update_rust
-
     if [ -x "$HOME/.appimage/appimageupdatetool-$ARCH.AppImage" ]; then
         for i in "$HOME/.appimage/"*.[Aa]pp[Ii]mage; do
+            [ -e "$i" ] || continue
             "$HOME/.appimage/appimageupdatetool-$ARCH.AppImage" "$i"
         done
     fi
 else
-    echo "ERROR unsupport $OS"
+    echo "ERROR: Unsupported OS $OS"
     exit 1
 fi
 
-if [ -n "$ZSH" ] && [ -d "$ZSH" ]; then
-    "$ZSH/tools/upgrade.sh" &&
-        printf 'LAST_EPOCH=%d\n' $((EPOCHSECONDS / 86400)) >|"$ZSH/cache/.zsh-update"
+# Git repositories updates
+echo "${CYAN}Updating repositories...${NORMAL}"
+if [ -d "$HOME/.dotfiles" ]; then
+    (cd "$HOME/.dotfiles" && git up)
+fi
+if [ -d "$HOME/.omz_custom" ]; then
+    (cd "$HOME/.omz_custom" && git up)
+fi
+
+# Run language package updates
+update_rust
+update_python
+
+# ZSH update checking
+if [ -n "${ZSH:-}" ] && [ -d "$ZSH" ]; then
+    echo "${CYAN}Updating Oh My Zsh...${NORMAL}"
+    if [ -f "$ZSH/tools/upgrade.sh" ]; then
+        "$ZSH/tools/upgrade.sh" &&
+            printf 'LAST_EPOCH=%d\n' $((EPOCHSECONDS / 86400)) >|"$ZSH/cache/.zsh-update"
+    fi
 fi
