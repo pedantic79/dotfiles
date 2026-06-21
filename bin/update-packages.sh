@@ -13,14 +13,18 @@ else
     NORMAL=""
 fi
 
+info() {
+    echo "${CYAN}$1${NORMAL}"
+}
+
 update_rust() {
     if command -v rustup >/dev/null 2>&1; then
-        echo "${CYAN}Updating Rust toolchains...${NORMAL}"
+        info "Updating Rust toolchains..."
         rustup update
     fi
 
     if command -v cargo-install-update >/dev/null 2>&1; then
-        echo "${CYAN}Updating cargo packages...${NORMAL}"
+        info "Updating cargo packages..."
         if command -v rustup >/dev/null 2>&1 && rustup toolchain list | grep -q '^stable'; then
             cargo +stable install-update --all
         else
@@ -31,7 +35,7 @@ update_rust() {
 
 update_python() {
     if command -v uv >/dev/null 2>&1; then
-        echo "${CYAN}Updating python tools...${NORMAL}"
+        info "Updating python tools..."
         # On Darwin/macOS, Homebrew manages upgrading uv.
         if [ "${OS:-}" != "Darwin" ]; then
             uv self update || true
@@ -44,7 +48,7 @@ update_python() {
 OS=$(uname -s)
 ARCH=$(uname -m)
 
-echo "${CYAN}Running OS-specific package manager updates...${NORMAL}"
+info "Running OS-specific package manager updates..."
 if [ "$OS" = "Darwin" ]; then
     if command -v brew >/dev/null 2>&1; then
         brew update
@@ -68,7 +72,7 @@ else
 fi
 
 # Git repositories updates
-echo "${CYAN}Updating repositories...${NORMAL}"
+info "Updating repositories..."
 if [ -d "$HOME/.dotfiles" ]; then
     (cd "$HOME/.dotfiles" && git up)
 fi
@@ -82,7 +86,7 @@ update_python
 
 # ZSH update checking
 if [ -n "${ZSH:-}" ] && [ -d "$ZSH" ]; then
-    echo "${CYAN}Updating Oh My Zsh...${NORMAL}"
+    info "Updating Oh My Zsh..."
     if [ -f "$ZSH/tools/upgrade.sh" ]; then
         "$ZSH/tools/upgrade.sh" &&
             printf 'LAST_EPOCH=%d\n' $((EPOCHSECONDS / 86400)) >|"$ZSH/cache/.zsh-update"
