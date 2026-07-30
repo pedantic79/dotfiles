@@ -77,8 +77,8 @@ if [ -z "$remote" ]; then
 fi
 
 printf "%-60s" "$message"
-echo "${PROMPT}${CMD_COLOR} git fetch --all --tags --prune${NORMAL}"
-git fetch --all --tags --prune
+echo "${PROMPT}${CMD_COLOR} git fetch --all --tags --prune --force${NORMAL}"
+git fetch --all --tags --prune --force
 remote_master=$(git rev-parse --short "$remote/$master")
 local_master=$(git rev-parse --short "$master")
 

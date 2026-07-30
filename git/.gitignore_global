@@ -13,3 +13,9 @@ Desktop.ini
 
 # Gemini
 .agents/
+
+# Playwright MCP
+.playwright-mcp/
+
+# Bob notes
+.bob/notes
