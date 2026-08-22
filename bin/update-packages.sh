@@ -44,6 +44,15 @@ update_python() {
     fi
 }
 
+update_repo() {
+    local repo="$1"
+
+    if [ -d "$repo" ]; then
+        info "Updating repository: $repo"
+        (cd "$repo" && git up)
+    fi
+}
+
 # Determine OS and Architecture
 OS=$(uname -s)
 ARCH=$(uname -m)
@@ -73,12 +82,8 @@ fi
 
 # Git repositories updates
 info "Updating repositories..."
-if [ -d "$HOME/.dotfiles" ]; then
-    (cd "$HOME/.dotfiles" && git up)
-fi
-if [ -d "$HOME/.omz_custom" ]; then
-    (cd "$HOME/.omz_custom" && git up)
-fi
+update_repo "$HOME/.dotfiles"
+update_repo "$HOME/.omz_custom"
 
 # Run language package updates
 update_rust
