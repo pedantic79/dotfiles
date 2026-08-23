@@ -4,15 +4,35 @@ set -o errexit
 set -o pipefail
 set -o errtrace
 
-NORMAL=$(tput sgr0)
-RED=$(tput setaf 1)
-YELLOW=$(tput setaf 220)
-GREEN=$(tput setaf 34)
-CMD_COLOR=$(tput setaf 199)
-ORANGE=$(tput setaf 208)
+NORMAL=""
+RED=""
+YELLOW=""
+GREEN=""
+CMD_COLOR=""
+ORANGE=""
+
+if [[ -t 1 && -z "${NO_COLOR+x}" && -n "${TERM:-}" ]] &&
+	command -v tput >/dev/null 2>&1; then
+	if NORMAL=$(tput sgr0 2>/dev/null) &&
+		RED=$(tput setaf 1 2>/dev/null) &&
+		YELLOW=$(tput setaf 220 2>/dev/null) &&
+		GREEN=$(tput setaf 34 2>/dev/null) &&
+		CMD_COLOR=$(tput setaf 199 2>/dev/null) &&
+		ORANGE=$(tput setaf 208 2>/dev/null); then
+		:
+	else
+		NORMAL=""
+		RED=""
+		YELLOW=""
+		GREEN=""
+		CMD_COLOR=""
+		ORANGE=""
+	fi
+fi
+
 PROMPT="${ORANGE}»"
 
-declare -r NORMAL RED YELLOW GREEN
+declare -r NORMAL RED YELLOW GREEN CMD_COLOR ORANGE PROMPT
 
 err_report() {
 	echo "${RED}Error running '$1' [rc=$2] line ${3}${NORMAL}"
@@ -25,24 +45,24 @@ if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
 	exit 1
 fi
 
-main_or_master() {
-	local ref
-	# Try to query the default branch from origin/HEAD
-	ref=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null)
-	if [[ -n "$ref" ]]; then
-		echo "${ref##*/}"
+if ! original_branch="$(git symbolic-ref --quiet --short HEAD)"; then
+	echo "${RED}git-up requires a checked-out branch; HEAD is detached... abort${NORMAL}" >&2
+	exit 1
+fi
+
+resolve_default_branch() {
+	local remote_name="$1"
+	local ref=""
+
+	ref=$(git ls-remote --symref "$remote_name" HEAD 2>/dev/null |
+		awk '$1 == "ref:" { print $2; exit }')
+	if [[ "$ref" == refs/heads/* ]]; then
+		echo "${ref#refs/heads/}"
 		return
 	fi
 
-	# Fallback to checking local main/master
-	if git show-ref --verify --quiet refs/heads/main; then
-		echo "main"
-	elif git show-ref --verify --quiet refs/heads/master; then
-		echo "master"
-	else
-		echo "${RED}main or master branch is not found... abort${NORMAL}" >&2
-		exit 1
-	fi
+	echo "${RED}default branch for remote '$remote_name' is not found... abort${NORMAL}" >&2
+	return 1
 }
 
 # readarray doesn't work in MacOS
@@ -51,7 +71,6 @@ while read -r line; do
 	remotes+=("$line")
 done < <(git remote)
 
-master=$(main_or_master)
 message="missing"
 remote=""
 
@@ -79,30 +98,64 @@ fi
 printf "%-60s" "$message"
 echo "${PROMPT}${CMD_COLOR} git fetch --all --tags --prune --force${NORMAL}"
 git fetch --all --tags --prune --force
-remote_master=$(git rev-parse --short "$remote/$master")
-local_master=$(git rev-parse --short "$master")
+if ! default_branch=$(resolve_default_branch "$remote"); then
+	exit 1
+fi
 
-if [ "$remote_master" = "$local_master" ]; then
-	echo "${GREEN}$remote/$master and $master are on the same commit: ${local_master}${NORMAL}"
+if ! git show-ref --verify --quiet "refs/heads/$default_branch"; then
+	echo "${RED}local branch '$default_branch' is not found... abort${NORMAL}" >&2
+	exit 1
+fi
+
+if ! git show-ref --verify --quiet "refs/remotes/$remote/$default_branch"; then
+	echo "${RED}$remote/$default_branch is not found after fetch... abort${NORMAL}" >&2
+	exit 1
+fi
+
+remote_default=$(git rev-parse --short "$remote/$default_branch")
+local_default=$(git rev-parse --short "$default_branch")
+
+if [ "$remote_default" = "$local_default" ]; then
+	echo "${GREEN}$remote/$default_branch and $default_branch are on the same commit: ${local_default}${NORMAL}"
 	exit 0
 fi
 
-original_branch="$(git symbolic-ref --short HEAD)"
-
 # missing upstream
-printf "%-60s" "${YELLOW}rebasing $remote/$master to $master${NORMAL}"
-echo "${PROMPT}${CMD_COLOR} git rebase $remote/$master $master${NORMAL}"
-git rebase "$remote/$master" "$master"
+printf "%-60s" "${YELLOW}rebasing $remote/$default_branch to $default_branch${NORMAL}"
+echo "${PROMPT}${CMD_COLOR} git rebase $remote/$default_branch $default_branch${NORMAL}"
+git rebase "$remote/$default_branch" "$default_branch"
 
+push_status=0
 if [ "$remote" = "upstream" ]; then
-	printf "%-60s" "${YELLOW}pushing to origin/$master${NORMAL}"
-	echo "${PROMPT}${CMD_COLOR} git push origin $master${NORMAL}"
-	git push origin "$master"
+	printf "%-60s" "${YELLOW}pushing to origin/$default_branch${NORMAL}"
+	echo "${PROMPT}${CMD_COLOR} git push origin $default_branch${NORMAL}"
+	if git push origin "$default_branch"; then
+		:
+	else
+		push_status=$?
+	fi
 fi
 
+restore_status=0
 current_branch="$(git symbolic-ref --short HEAD)"
 if [ "$current_branch" != "$original_branch" ]; then
 	printf "%-60s" "${YELLOW}switching to $original_branch${NORMAL}"
 	echo "${PROMPT}${CMD_COLOR} git checkout $original_branch${NORMAL}"
-	git checkout "$original_branch"
+	if git checkout "$original_branch"; then
+		:
+	else
+		restore_status=$?
+		echo "${RED}Failed to restore $original_branch [rc=$restore_status]${NORMAL}" >&2
+	fi
+fi
+
+if [ "$restore_status" -ne 0 ]; then
+	if [ "$push_status" -ne 0 ]; then
+		echo "${RED}Push also failed [rc=$push_status]${NORMAL}" >&2
+	fi
+	exit "$restore_status"
+fi
+
+if [ "$push_status" -ne 0 ]; then
+	exit "$push_status"
 fi
