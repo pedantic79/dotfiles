@@ -225,6 +225,34 @@ test_detached_head_fails_before_fetch() {
 	pass "rejects detached HEAD before fetching"
 }
 
+test_run_step_preserves_command_output() {
+	begin_test
+	create_remote "$TEST_DIR/origin.git" main "$TEST_DIR/seed"
+	git clone --quiet "$TEST_DIR/origin.git" "$TEST_DIR/repo"
+
+	mkdir -p "$TEST_DIR/path"
+	local real_git
+	real_git="$(command -v git)"
+	printf '%s\n' \
+		'#!/usr/bin/env bash' \
+		"if [ \"\$1\" = fetch ]; then" \
+		'  echo "run_step stdout marker"' \
+		'  echo "run_step stderr marker" >&2' \
+		'fi' \
+		"exec \"\$REAL_GIT\" \"\$@\"" >"$TEST_DIR/path/git"
+	chmod +x "$TEST_DIR/path/git"
+
+	(
+		cd "$TEST_DIR/repo"
+		REAL_GIT="$real_git" PATH="$TEST_DIR/path:$PATH" "$GIT_UP"
+	) >"$TEST_DIR/output" 2>&1
+	local output
+	output="$(<"$TEST_DIR/output")"
+	assert_contains "$output" "run_step stdout marker" "run_step hid command stdout"
+	assert_contains "$output" "run_step stderr marker" "run_step hid command stderr"
+	pass "keeps command stdout and stderr visible"
+}
+
 test_noninteractive_color_setup() {
 	begin_test
 	local status=0
@@ -344,6 +372,7 @@ test_selected_upstream_default_branch
 test_push_failure_restores_branch
 test_rebase_conflict_stays_in_rebase
 test_detached_head_fails_before_fetch
+test_run_step_preserves_command_output
 test_noninteractive_color_setup
 test_nonsymbolic_remote_head_error
 test_missing_default_branch_refs

@@ -47,6 +47,7 @@ run_step() {
 	printf "%-60s" "$message"
 	printf '%s %s%s\n' "${PROMPT}${CMD_COLOR}" "$command" "$NORMAL"
 
+	# Keep the command attached to our stdout and stderr so its output stays visible.
 	if "$@"; then
 		return 0
 	else
