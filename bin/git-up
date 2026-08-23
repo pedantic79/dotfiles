@@ -2,7 +2,6 @@
 
 set -o errexit
 set -o pipefail
-set -o errtrace
 
 NORMAL=""
 RED=""
@@ -11,60 +10,59 @@ GREEN=""
 CMD_COLOR=""
 ORANGE=""
 
-if [[ -t 1 && -z "${NO_COLOR+x}" && -n "${TERM:-}" ]] &&
-	command -v tput >/dev/null 2>&1; then
-	if NORMAL=$(tput sgr0 2>/dev/null) &&
-		RED=$(tput setaf 1 2>/dev/null) &&
-		YELLOW=$(tput setaf 220 2>/dev/null) &&
-		GREEN=$(tput setaf 34 2>/dev/null) &&
-		CMD_COLOR=$(tput setaf 199 2>/dev/null) &&
-		ORANGE=$(tput setaf 208 2>/dev/null); then
-		:
-	else
-		NORMAL=""
-		RED=""
-		YELLOW=""
-		GREEN=""
-		CMD_COLOR=""
-		ORANGE=""
+init_colors() {
+	[[ -t 1 && -z "${NO_COLOR+x}" && -n "${TERM:-}" ]] || return 0
+	command -v tput >/dev/null 2>&1 || return 0
+
+	local normal red yellow green command_color orange
+	if normal=$(tput sgr0 2>/dev/null) &&
+		red=$(tput setaf 1 2>/dev/null) &&
+		yellow=$(tput setaf 220 2>/dev/null) &&
+		green=$(tput setaf 34 2>/dev/null) &&
+		command_color=$(tput setaf 199 2>/dev/null) &&
+		orange=$(tput setaf 208 2>/dev/null); then
+		NORMAL="$normal"
+		RED="$red"
+		YELLOW="$yellow"
+		GREEN="$green"
+		CMD_COLOR="$command_color"
+		ORANGE="$orange"
 	fi
-fi
+}
+
+init_colors
 
 PROMPT="${ORANGE}»"
 
 declare -r NORMAL RED YELLOW GREEN CMD_COLOR ORANGE PROMPT
 
-err_report() {
-	local command="${RUN_STEP_COMMAND:-$1}"
-	local line="${RUN_STEP_LINE:-$3}"
-
-	echo "${RED}Error running '$command' [rc=$2] line ${line}${NORMAL}"
-}
-
-trap 'err_report "$BASH_COMMAND" $? $LINENO' ERR
-
 run_step() {
 	local message="$1"
 	shift
-	local command
+	local command status
+	local line="${BASH_LINENO[0]}"
 	printf -v command '%q ' "$@"
 	command="${command% }"
 
 	printf "%-60s" "$message"
 	printf '%s %s%s\n' "${PROMPT}${CMD_COLOR}" "$command" "$NORMAL"
 
-	local RUN_STEP_COMMAND="$command"
-	local RUN_STEP_LINE="${BASH_LINENO[0]}"
-	"$@"
+	if "$@"; then
+		return 0
+	else
+		status=$?
+	fi
+
+	echo "${RED}Error running '$command' [rc=$status] line ${line}${NORMAL}"
+	return "$status"
 }
 
-if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-	echo "$(basename "$PWD") isn't a git project."
-	exit 1
-fi
-
-if ! original_branch="$(git symbolic-ref --quiet --short HEAD)"; then
-	echo "${RED}git-up requires a checked-out branch; HEAD is detached... abort${NORMAL}" >&2
+if ! original_branch="$(git symbolic-ref --quiet --short HEAD 2>/dev/null)"; then
+	if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+		echo "${RED}git-up requires a checked-out branch; HEAD is detached... abort${NORMAL}" >&2
+	else
+		echo "$(basename "$PWD") isn't a git project."
+	fi
 	exit 1
 fi
 
@@ -83,92 +81,75 @@ resolve_default_branch() {
 	return 1
 }
 
-# readarray doesn't work in MacOS
-declare -a remotes
-while read -r line; do
-	remotes+=("$line")
+has_origin=false
+has_upstream=false
+while read -r remote_name; do
+	case "$remote_name" in
+	origin) has_origin=true ;;
+	upstream) has_upstream=true ;;
+	esac
 done < <(git remote)
 
-message="missing"
-remote=""
-
-for i in "${remotes[@]}"; do
-	if [ "$i" = "origin" ]; then
-		message="${YELLOW}upstream missing using origin${NORMAL}"
-		remote="origin"
-		break
-	fi
-done
-
-for i in "${remotes[@]}"; do
-	if [ "$i" = "upstream" ]; then
-		remote="upstream"
-		message="${YELLOW}Detected ${remote}${NORMAL}"
-		break
-	fi
-done
-
-if [ -z "$remote" ]; then
-	echo "${RED}origin branch is not found... abort${NORMAL}"
+publish_remote=""
+if $has_upstream && $has_origin; then
+	source_remote="upstream"
+	publish_remote="origin"
+	fetch_message="${YELLOW}Detected $source_remote${NORMAL}"
+elif $has_upstream; then
+	echo "${RED}publish remote 'origin' is not found... abort${NORMAL}" >&2
+	exit 1
+elif $has_origin; then
+	source_remote="origin"
+	fetch_message="${YELLOW}upstream missing using $source_remote${NORMAL}"
+else
+	echo "${RED}origin or upstream remote is not found... abort${NORMAL}"
 	exit 1
 fi
 
-run_step "$message" git fetch --all --tags --prune --force
-if ! default_branch=$(resolve_default_branch "$remote"); then
+declare -r source_remote publish_remote fetch_message
+
+run_step "$fetch_message" git fetch --all --tags --prune --force
+if ! default_branch=$(resolve_default_branch "$source_remote"); then
 	exit 1
 fi
 
-if ! git show-ref --verify --quiet "refs/heads/$default_branch"; then
+local_default=""
+remote_default=""
+while read -r ref_name commit; do
+	case "$ref_name" in
+	"refs/heads/$default_branch") local_default="$commit" ;;
+	"refs/remotes/$source_remote/$default_branch") remote_default="$commit" ;;
+	esac
+done < <(
+	git for-each-ref --format='%(refname) %(objectname:short)' \
+		"refs/heads/$default_branch" \
+		"refs/remotes/$source_remote/$default_branch"
+)
+
+if [ -z "$local_default" ]; then
 	echo "${RED}local branch '$default_branch' is not found... abort${NORMAL}" >&2
 	exit 1
 fi
 
-if ! git show-ref --verify --quiet "refs/remotes/$remote/$default_branch"; then
-	echo "${RED}$remote/$default_branch is not found after fetch... abort${NORMAL}" >&2
+if [ -z "$remote_default" ]; then
+	echo "${RED}$source_remote/$default_branch is not found after fetch... abort${NORMAL}" >&2
 	exit 1
 fi
 
-remote_default=$(git rev-parse --short "$remote/$default_branch")
-local_default=$(git rev-parse --short "$default_branch")
-
 if [ "$remote_default" = "$local_default" ]; then
-	echo "${GREEN}$remote/$default_branch and $default_branch are on the same commit: ${local_default}${NORMAL}"
+	echo "${GREEN}$source_remote/$default_branch and $default_branch are on the same commit: ${local_default}${NORMAL}"
 	exit 0
 fi
 
-# missing upstream
-run_step "${YELLOW}rebasing $remote/$default_branch to $default_branch${NORMAL}" \
-	git rebase "$remote/$default_branch" "$default_branch"
+run_step "${YELLOW}rebasing $source_remote/$default_branch to $default_branch${NORMAL}" \
+	git rebase "$source_remote/$default_branch" "$default_branch"
 
-push_status=0
-if [ "$remote" = "upstream" ]; then
-	if run_step "${YELLOW}pushing to origin/$default_branch${NORMAL}" \
-		git push origin "$default_branch"; then
-		:
-	else
-		push_status=$?
-	fi
+if [ "$original_branch" != "$default_branch" ]; then
+	run_step "${YELLOW}switching to $original_branch${NORMAL}" \
+		git checkout "$original_branch"
 fi
 
-restore_status=0
-current_branch="$(git symbolic-ref --short HEAD)"
-if [ "$current_branch" != "$original_branch" ]; then
-	if run_step "${YELLOW}switching to $original_branch${NORMAL}" \
-		git checkout "$original_branch"; then
-		:
-	else
-		restore_status=$?
-		echo "${RED}Failed to restore $original_branch [rc=$restore_status]${NORMAL}" >&2
-	fi
-fi
-
-if [ "$restore_status" -ne 0 ]; then
-	if [ "$push_status" -ne 0 ]; then
-		echo "${RED}Push also failed [rc=$push_status]${NORMAL}" >&2
-	fi
-	exit "$restore_status"
-fi
-
-if [ "$push_status" -ne 0 ]; then
-	exit "$push_status"
+if [ -n "$publish_remote" ]; then
+	run_step "${YELLOW}pushing to $publish_remote/$default_branch${NORMAL}" \
+		git push "$publish_remote" "$default_branch"
 fi

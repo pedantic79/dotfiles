@@ -300,7 +300,7 @@ test_missing_default_branch_refs() {
 	pass "validates local and fetched default-branch refs"
 }
 
-test_restore_failure_takes_precedence() {
+test_restore_failure_prevents_push() {
 	begin_test
 	create_remote "$TEST_DIR/upstream.git" main "$TEST_DIR/seed"
 	git init --quiet --bare "$TEST_DIR/origin.git"
@@ -318,7 +318,6 @@ test_restore_failure_takes_precedence() {
 	real_git="$(command -v git)"
 	printf '%s\n' \
 		'#!/usr/bin/env bash' \
-		"if [ \"\$1\" = push ]; then exit 41; fi" \
 		"if [ \"\$1\" = checkout ] && [ \"\${2:-}\" = feature ]; then exit 42; fi" \
 		"exec \"\$REAL_GIT\" \"\$@\"" >"$TEST_DIR/path/git"
 	chmod +x "$TEST_DIR/path/git"
@@ -335,9 +334,9 @@ test_restore_failure_takes_precedence() {
 	assert_eq 42 "$status" "restore failure did not determine the final status"
 	local output
 	output="$(<"$TEST_DIR/output")"
-	assert_contains "$output" "Failed to restore feature [rc=42]" "restore failure was not reported"
-	assert_contains "$output" "Push also failed [rc=41]" "earlier push failure was hidden"
-	pass "reports both failures and prioritizes restoration status"
+	assert_contains "$output" "Error running 'git checkout feature' [rc=42]" "restore failure was not reported"
+	assert_not_contains "$output" "git push origin main" "push was attempted after restore failure"
+	pass "stops before pushing when branch restoration fails"
 }
 
 test_origin_default_branch
@@ -348,6 +347,6 @@ test_detached_head_fails_before_fetch
 test_noninteractive_color_setup
 test_nonsymbolic_remote_head_error
 test_missing_default_branch_refs
-test_restore_failure_takes_precedence
+test_restore_failure_prevents_push
 
 echo "1..$TEST_COUNT"
