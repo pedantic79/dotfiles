@@ -35,10 +35,28 @@ PROMPT="${ORANGE}»"
 declare -r NORMAL RED YELLOW GREEN CMD_COLOR ORANGE PROMPT
 
 err_report() {
-	echo "${RED}Error running '$1' [rc=$2] line ${3}${NORMAL}"
+	local command="${RUN_STEP_COMMAND:-$1}"
+	local line="${RUN_STEP_LINE:-$3}"
+
+	echo "${RED}Error running '$command' [rc=$2] line ${line}${NORMAL}"
 }
 
 trap 'err_report "$BASH_COMMAND" $? $LINENO' ERR
+
+run_step() {
+	local message="$1"
+	shift
+	local command
+	printf -v command '%q ' "$@"
+	command="${command% }"
+
+	printf "%-60s" "$message"
+	printf '%s %s%s\n' "${PROMPT}${CMD_COLOR}" "$command" "$NORMAL"
+
+	local RUN_STEP_COMMAND="$command"
+	local RUN_STEP_LINE="${BASH_LINENO[0]}"
+	"$@"
+}
 
 if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
 	echo "$(basename "$PWD") isn't a git project."
@@ -95,9 +113,7 @@ if [ -z "$remote" ]; then
 	exit 1
 fi
 
-printf "%-60s" "$message"
-echo "${PROMPT}${CMD_COLOR} git fetch --all --tags --prune --force${NORMAL}"
-git fetch --all --tags --prune --force
+run_step "$message" git fetch --all --tags --prune --force
 if ! default_branch=$(resolve_default_branch "$remote"); then
 	exit 1
 fi
@@ -121,15 +137,13 @@ if [ "$remote_default" = "$local_default" ]; then
 fi
 
 # missing upstream
-printf "%-60s" "${YELLOW}rebasing $remote/$default_branch to $default_branch${NORMAL}"
-echo "${PROMPT}${CMD_COLOR} git rebase $remote/$default_branch $default_branch${NORMAL}"
-git rebase "$remote/$default_branch" "$default_branch"
+run_step "${YELLOW}rebasing $remote/$default_branch to $default_branch${NORMAL}" \
+	git rebase "$remote/$default_branch" "$default_branch"
 
 push_status=0
 if [ "$remote" = "upstream" ]; then
-	printf "%-60s" "${YELLOW}pushing to origin/$default_branch${NORMAL}"
-	echo "${PROMPT}${CMD_COLOR} git push origin $default_branch${NORMAL}"
-	if git push origin "$default_branch"; then
+	if run_step "${YELLOW}pushing to origin/$default_branch${NORMAL}" \
+		git push origin "$default_branch"; then
 		:
 	else
 		push_status=$?
@@ -139,9 +153,8 @@ fi
 restore_status=0
 current_branch="$(git symbolic-ref --short HEAD)"
 if [ "$current_branch" != "$original_branch" ]; then
-	printf "%-60s" "${YELLOW}switching to $original_branch${NORMAL}"
-	echo "${PROMPT}${CMD_COLOR} git checkout $original_branch${NORMAL}"
-	if git checkout "$original_branch"; then
+	if run_step "${YELLOW}switching to $original_branch${NORMAL}" \
+		git checkout "$original_branch"; then
 		:
 	else
 		restore_status=$?
