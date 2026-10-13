@@ -61,7 +61,7 @@ info "Running OS-specific package manager updates..."
 if [ "$OS" = "Darwin" ]; then
     if command -v brew >/dev/null 2>&1; then
         brew update
-        brew upgrade --yes
+        brew upgrade --yes --greedy-auto-updates
         brew cleanup -s --prune 0
     fi
 elif [ "$OS" = "Linux" ]; then
